@@ -1,0 +1,41 @@
+.header {
+  margin-bottom: 20px;
+}
+
+.has-tooltip {
+  color: #000;
+  background: yellow;
+  position: relative;
+}
+
+.has-tooltip:hover {
+  color: red;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: black;
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.tooltip_active {
+  display: block;
+}
+
+.tooltip[data-position="top"] {
+  bottom: 100%;
+}
+
+.tooltip[data-position="bottom"] {
+  top: 100%;
+}
+
+.tooltip[data-position="left"] {
+  right: 100%;
+}
+
+.tooltip[data-position="right"] {
+  left: 100%;
+}
