@@ -1,5 +1,5 @@
 const tooltipElements = document.querySelectorAll('.has-tooltip');
-const tooltips = [];
+let activeTooltip;
 
 tooltipElements.forEach((element) => {
   element.addEventListener('click', (event) => {
@@ -7,13 +7,15 @@ tooltipElements.forEach((element) => {
 
     const text = element.getAttribute('title');
     const position = element.getBoundingClientRect();
-
-    const existingTooltip = tooltips.find((tooltip) => tooltip.element === element);
-
-    if (existingTooltip) {
-      existingTooltip.tooltip.parentNode.removeChild(existingTooltip.tooltip);
-      tooltips.splice(tooltips.indexOf(existingTooltip), 1);
+    
+    if (activeTooltip && activeTooltip.element === element) {
+      activeTooltip.tooltip.style.display = 'none';
+      activeTooltip = null;
     } else {
+      if (activeTooltip) {
+        activeTooltip.tooltip.style.display = 'none';
+      }
+
       const tooltip = document.createElement('div');
       tooltip.classList.add('tooltip');
       tooltip.textContent = text;
@@ -23,23 +25,31 @@ tooltipElements.forEach((element) => {
 
       document.body.appendChild(tooltip);
 
-      tooltips.push({
+      element.removeAttribute('title');
+
+      activeTooltip = {
         element: element,
         tooltip: tooltip
-      });
+      };
+
+      const handleClickOutside = (event) => {
+        if (!element.contains(event.target) && tooltip.style.display !== 'none') {
+          tooltip.style.display = 'none';
+          document.removeEventListener('click', handleClickOutside);
+        }
+      };
+
+      const handleElementClick = (event) => {
+        if (tooltip.style.display === 'none') {
+          tooltip.style.display = 'block';
+        } else {
+          tooltip.style.display = 'none';
+          document.removeEventListener('click', handleElementClick);
+        }
+      };
+
+      document.addEventListener('click', handleClickOutside);
+      element.addEventListener('click', handleElementClick);
     }
-
-    element.removeAttribute('title');
-
-    const handleClickOutside = (event) => {
-      if (!element.contains(event.target) && !tooltip.contains(event.target)) {
-        tooltip.parentNode.removeChild(tooltip);
-        document.removeEventListener('click', handleClickOutside);
-
-        tooltips.splice(tooltips.indexOf(tooltip), 1);
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
   });
 });
