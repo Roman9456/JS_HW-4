@@ -7,6 +7,10 @@ tooltipElements.forEach((element) => {
 
     const text = element.getAttribute('title');
     const position = element.getBoundingClientRect();
+
+    if (!text) {
+      return;
+    }
     
     if (activeTooltip && activeTooltip.element === element) {
       activeTooltip.tooltip.style.display = 'none';
